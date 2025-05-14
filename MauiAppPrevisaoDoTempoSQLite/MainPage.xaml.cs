@@ -1,25 +1,61 @@
-﻿namespace MauiAppPrevisaoDoTempoSQLite
+﻿using System;
+using MauiAppPrevisaoDoTempoSQLite.Models;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using MauiAppPrevisaoDoTempoSQLite.Data;
+using MauiAppPrevisaoDoTempoSQLite.Services;
+using PrevisaoDoTempoApp.Models;
+using Microsoft.Maui.Controls;
+using System.Data;
+
+
+namespace MauiAppPrevisaoDoTempoSQLite
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly ServicoPrevisaoTempo _servicoPrevisaoTempo;
+        
+        public ObservableCollection<PesquisaPrevisaoTempo> Consultas { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
+            _servicoPrevisaoTempo = new ServicoPrevisaoTempo(App.Database);
+            Consultas = new ObservableCollection<PesquisaPrevisaoTempo>();
+            BindingContext = this;
+            CarregarConsultas();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void CarregarConsultas()
         {
-            count++;
+            var consultas = await App.Database.GetConsultasAsync();
+            Consultas.Clear();
+            foreach (var consulta in consultas.OrderByDescending(c => c.DataPesquisa))
+            {
+                Consultas.Add(consulta);
+            }
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+        private async void OnPesquisarClicked(object sender, EventArgs e)
+        {
+            string cidade = cidadeEntry.Text; // Obtém o valor do campo de entrada
+            var previsao = await _servicoPrevisaoTempo.ObterPrevisao(cidade);
+            if (previsao != null)
+            {
+                //cidadeLabel.Text = previsao.Cidade;
+                cidadeLabel.Text = previsao.Cidade;
+                temperaturaLabel.Text = $"{previsao.Temperatura}°C";
+                dataLabel.Text = previsao.Data.ToString("dd/MM/yyyy HH:mm");
+
+
+
+                CarregarConsultas();
+            }
             else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            {
+                await DisplayAlert("Erro", "Não foi possível obter a previsão do tempo. Verifique o nome da cidade e tente novamente.", "OK");
+            }
         }
     }
-
 }
