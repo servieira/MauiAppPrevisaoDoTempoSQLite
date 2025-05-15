@@ -1,5 +1,6 @@
 ﻿using MauiAppPrevisaoDoTempoSQLite.Data;
 
+
 namespace MauiAppPrevisaoDoTempoSQLite
 {
     public partial class App : Application

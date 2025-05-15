@@ -8,6 +8,7 @@ namespace PrevisaoDoTempoApp.Models
         public int Id { get; set; }
         public string Cidade { get; set; }
         public double Temperatura { get; set; }
+        public double temp { get; set; }
 
         public DateTime Data { get; set; }
         public string Previsao { get; set; }
