@@ -53,7 +53,7 @@ namespace MauiAppPrevisaoDoTempoSQLite.Services
 
                     Debug.WriteLine("------------------------------------------");
                     Debug.WriteLine(teste);
-                    Debug.WriteLine("------------------------------------------");
+                    Debug.WriteLine("------------------------------------------");//
 
                     previsao.Cidade = cidade;
                     previsao.Data = DateTime.Now;
